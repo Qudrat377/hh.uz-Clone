@@ -11,6 +11,7 @@ import { JwtStrategy } from "./jwt-strategy";
 import { GoogleStrategy } from "./google-strategy";
 import { GithubStrategy } from "./github-strategy";
 import { UserModule } from "./user/user.module";
+import { JobsModule } from "../jobs/jobs.module";
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { UserModule } from "./user/user.module";
         }),
         MailModule,
         UserModule,
+        JobsModule
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy, GoogleStrategy, GithubStrategy],

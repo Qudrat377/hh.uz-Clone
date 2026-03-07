@@ -4,8 +4,8 @@ import {
   JoinColumn,
   OneToOne,
 } from "typeorm";
-import { Auth } from "./auth.entity";
 import { BaseEntity } from "src/database/base.entity";
+import { Auth } from "src/module/auth/entities/auth.entity";
 
 @Entity({ name: "profile" })
 export class Profile extends BaseEntity {

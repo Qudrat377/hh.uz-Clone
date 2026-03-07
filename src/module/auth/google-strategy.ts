@@ -40,11 +40,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
             externalId: id, // Yoki Google bergan unique ID
           },
         ],
-
-        // socialAccounts:{
-        //     provider: provider,
-        //     externalId: accessToken, // Yoki Google bergan unique ID
-        // }
       };
 
       done(null, user);

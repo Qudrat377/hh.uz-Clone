@@ -1,15 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne } from "typeorm";
 import { Auth } from "./auth.entity";
+import { BaseEntity } from "src/database/base.entity";
 
 @Entity({name: "socialAccount"})
-export class SocialAccount {
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column({default: "google"})
+export class SocialAccount extends BaseEntity {
+    @Column({nullable: true})
     provider: string;
 
-    @Column({default: "1"})
+    @Column({nullable: true})
     externalId: string;
 
     @ManyToOne(() => Auth, (auth) => auth.socialAccounts, { onDelete: "CASCADE" })

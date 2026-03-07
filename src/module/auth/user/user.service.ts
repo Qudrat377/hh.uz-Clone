@@ -5,44 +5,49 @@ import { Repository } from "typeorm";
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(Auth) private userRepository: Repository<Auth>) {}
+  constructor(
+    @InjectRepository(Auth) private userRepository: Repository<Auth>,
+  ) {}
 
-    async findOrCreate(userData: any): Promise<Auth> {
-    // userData ichidan ma'lumotlarni ajratib olamiz
-    // GoogleStrategy yuborgan nom bilan (socialAccountData)
-    const { email, profile, socialAccountData } = userData;
+  async findOrCreate(userData: any): Promise<Auth> {
+    // userData ichida socialAccounts massiv bo'lib kelyapti
+    const { email, profile, socialAccounts } = userData;
+    const incomingAccount = socialAccounts[0]; // Kelayotgan yangi account ma'lumoti
 
     let user = await this.userRepository.findOne({
-        where: { email },
-        relations: ['profile', 'socialAccounts']
+      where: { email },
+      relations: ["profile", "socialAccounts"],
     });
 
     if (user) {
-        // Profilni yangilaymiz
-        this.userRepository.merge(user, { profile });
+      // 1. Profilni yangilaymiz
+      this.userRepository.merge(user, { profile });
 
-        // Social account bor-yo'qligini tekshiramiz
-        const hasSocial = user.socialAccounts?.some(
-            acc => acc.provider === socialAccountData.provider && acc.externalId === socialAccountData.externalId
-        );
+      // 2. some() orqali tekshiramiz: Bazadagi accountlar ichida
+      // hozir kelgan provider (google) va id bormi?
+      const hasSocial = user.socialAccounts?.some(
+        (acc) =>
+          acc.provider === incomingAccount.provider &&
+          acc.externalId === incomingAccount.externalId,
+      );
 
-        if (!hasSocial) {
-            // MUHIM: Entity dagi nomi 'socialAccounts' (ko'plikda)
-            user.socialAccounts.push(socialAccountData);
-        }
+      // 3. Agar bazada bu social account hali yo'q bo'lsa, qo'shamiz
+      if (!hasSocial) {
+        user.socialAccounts.push(incomingAccount);
+      }
     } else {
-        // Yangi user yaratishda Entity maydon nomiga (socialAccounts) moslaymiz
-        user = this.userRepository.create({
-            email,
-            profile,
-            socialAccounts: [socialAccountData] // socialAccountData EMAS, socialAccounts
-        });
+      // 4. Yangi user yaratish
+      user = this.userRepository.create({
+        email,
+        profile,
+        socialAccounts: [incomingAccount],
+      });
     }
 
     return await this.userRepository.save(user);
-}
+  }
 
-    async findByEmail(email: string): Promise<Auth | null> {
-        return this.userRepository.findOne({where: {email}})
-    }
+  async findByEmail(email: string): Promise<Auth | null> {
+    return this.userRepository.findOne({ where: { email } });
+  }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsEmail, IsOptional, IsString, Length } from "class-validator";
-import { UserRole } from "src/shared/constants/user.role";
+import { UserRole } from "src/shared/constants/enum/user.role";
 
 export class CreateAuthDto {
     @IsString({message: "string bo'lishi kerak"})
