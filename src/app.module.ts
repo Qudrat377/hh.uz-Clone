@@ -11,6 +11,10 @@ import { Job } from './module/jobs/entities/job.entity';
 import { Reply } from './module/reply/entities/reply.entity';
 import { SevedModule } from './module/seved/seved.module';
 import { Seved } from './module/seved/entities/seved.entity';
+import { LoggerModule } from './module/logger/logger.module';
+import { ErrorLog } from './module/logger/entities/error-log.entity';
+import { InfoLog } from './module/logger/entities/info-log.entity';
+import { WarnLog } from './module/logger/entities/warn-log.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({envFilePath: ".env", isGlobal: true}),
@@ -22,7 +26,7 @@ import { Seved } from './module/seved/entities/seved.entity';
       password: String(process.env.DB_PASSWORD),
       database: String(process.env.DB_NAME),
       autoLoadEntities: true,
-      entities: [Auth, Profile, Job, Reply, Seved],
+      entities: [Auth, Profile, Job, Reply, Seved, ErrorLog, InfoLog, WarnLog],
       synchronize: true,
       logging: false
     }),
@@ -30,7 +34,8 @@ import { Seved } from './module/seved/entities/seved.entity';
     ProfileModule,
     JobsModule,
     ReplyModule,
-    SevedModule
+    SevedModule,
+    LoggerModule,
   ], 
   controllers: [],
   providers: [],

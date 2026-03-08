@@ -45,3 +45,6 @@ npm i multer
 
  ---commond
  npm install @nestjs/mapped-types --legacy-peer-deps
+
+ ---commond
+ npm install nest-winston winston winston-daily-rotate-file --legacy-peer-deps
