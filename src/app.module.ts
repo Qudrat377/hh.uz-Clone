@@ -9,6 +9,8 @@ import { Auth } from './module/auth/entities/auth.entity';
 import { Profile } from './module/profile/entities/profile.entity';
 import { Job } from './module/jobs/entities/job.entity';
 import { Reply } from './module/reply/entities/reply.entity';
+import { SevedModule } from './module/seved/seved.module';
+import { Seved } from './module/seved/entities/seved.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({envFilePath: ".env", isGlobal: true}),
@@ -20,7 +22,7 @@ import { Reply } from './module/reply/entities/reply.entity';
       password: String(process.env.DB_PASSWORD),
       database: String(process.env.DB_NAME),
       autoLoadEntities: true,
-      entities: [Auth, Profile, Job, Reply],
+      entities: [Auth, Profile, Job, Reply, Seved],
       synchronize: true,
       logging: false
     }),
@@ -28,6 +30,7 @@ import { Reply } from './module/reply/entities/reply.entity';
     ProfileModule,
     JobsModule,
     ReplyModule,
+    SevedModule
   ], 
   controllers: [],
   providers: [],

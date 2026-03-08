@@ -14,6 +14,7 @@ import { Position } from "src/shared/constants/enum/position";
 import { WorkHeader } from "src/shared/constants/enum/work.title";
 import { Auth } from "src/module/auth/entities/auth.entity";
 import { Reply } from "src/module/reply/entities/reply.entity";
+import { Seved } from "src/module/seved/entities/seved.entity";
 
 @Entity({ name: "job" })
 export class Job extends BaseEntity {
@@ -76,4 +77,7 @@ export class Job extends BaseEntity {
 
   @OneToMany(() => Reply, (reply) => reply.job, {cascade: true})
   replies: Reply[];
+  
+  @OneToMany(() => Seved, (seved) => seved.jobs, {cascade: true})
+  seveds: Seved[];
 }

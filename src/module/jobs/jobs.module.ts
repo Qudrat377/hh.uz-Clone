@@ -12,7 +12,7 @@ import { AuthModule } from '../auth/auth.module';
     AuthModule,
   ],
   controllers: [JobsController],
-  providers: [TypeOrmModule, JobsService],
+  providers: [JobsService],
   exports: [TypeOrmModule, JobsService]
 })
 export class JobsModule {}

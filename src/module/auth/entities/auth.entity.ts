@@ -5,6 +5,7 @@ import { BaseEntity } from "src/database/base.entity";
 import { UserRole } from "src/shared/constants/enum/user.role";
 import { Job } from "src/module/jobs/entities/job.entity";
 import { Reply } from "src/module/reply/entities/reply.entity";
+import { Seved } from "src/module/seved/entities/seved.entity";
 
 @Entity({ name: "auth" })
 export class Auth extends BaseEntity {
@@ -35,4 +36,7 @@ export class Auth extends BaseEntity {
 
   @OneToMany(() => Reply, (reply) => reply.author, {cascade: true})
   replies: Reply[];
+  
+  @OneToMany(() => Seved, (seved) => seved.author, {cascade: true})
+  seveds: Seved[];
 }

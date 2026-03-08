@@ -51,6 +51,7 @@ export class ReplyController {
     return this.replyService.create(+id, req.user.id, createReplyDto);
   }
 
+  // my replays 
   @UseGuards(RolesGuard)
   @Roles(UserRole.EMPLOYER, UserRole.USER, UserRole.CANDIDATE)
   @ApiOperation({ description: "Get All my reply api (owner)" })

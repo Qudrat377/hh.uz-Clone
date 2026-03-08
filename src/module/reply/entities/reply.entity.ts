@@ -11,6 +11,7 @@ import { BaseEntity } from "src/database/base.entity";
 import { Job } from "src/module/jobs/entities/job.entity";
 import { Auth } from "src/module/auth/entities/auth.entity";
 import { isAbout } from "src/shared/constants/enum/isAbout";
+import { Seved } from "src/module/seved/entities/seved.entity";
 
 @Entity({ name: "reply" })
 export class Reply extends BaseEntity {
