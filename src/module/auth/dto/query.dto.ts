@@ -17,6 +17,6 @@ export class QueryDto {
 
     @IsString()
     @IsOptional()
-    @ApiPropertyOptional({default: "Ali"}) //@ApiPropertyOptional()
+    @ApiPropertyOptional({default: ""}) //@ApiPropertyOptional()
     search?: string;
 }

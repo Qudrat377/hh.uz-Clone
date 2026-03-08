@@ -10,7 +10,7 @@ import * as bcrypt from "bcrypt";
 import { Auth } from "./entities/auth.entity";
 import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
-import { CreateAuthDto, LoginAuthDto } from "./dto/create-auth.dto";
+import { CreateAuthDto, ForgotPasswordAuthDto, LoginAuthDto, ResentOtpAuthDto } from "./dto/create-auth.dto";
 import { generateOtp } from "src/common/utils/generateResetOtp";
 import { MailService } from "src/providers/mail/mail.service";
 import { UserService } from "./user/user.service";
@@ -28,7 +28,7 @@ export class AuthService {
 
   async register(createAuthDto: CreateAuthDto): Promise<{ message: string }> {
     try {
-      const { firstName, email, password, from, role } = createAuthDto;
+      const { email, password, role, firstName, from } = createAuthDto;
       const foundedUser = await this.authRepository.findOne({
         where: { email },
       });
@@ -140,6 +140,68 @@ export class AuthService {
       return {message: "Wrong password"}
     }
   }
+
+  async resendOtp(resentOtpAuthDto: ResentOtpAuthDto): Promise<{ message: string }> {
+    try {
+      const { email } = resentOtpAuthDto;
+      const foundedUser = await this.authRepository.findOne({
+        where: { email },
+      });
+
+      if (!foundedUser) throw new NotFoundException("User not found");
+
+      const code = generateOtp();
+
+      const time = Date.now() + 120000;
+
+      await this.authRepository.update(foundedUser.id, {
+        otp: code,
+        otpTime: time
+      })
+
+      await this.mailService.sendOtpEmail(email, code);
+
+      return { message: "Otp sent. Please check your email" };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async forgotPassword(
+    forgotPasswordAuthDto: ForgotPasswordAuthDto,
+  ): Promise<{ message: string }> {
+    try {
+      const { email, otp, new_password } = forgotPasswordAuthDto;
+      const foundedUser = await this.authRepository.findOne({
+        where: { email },
+      });
+
+      if (!foundedUser) throw new BadRequestException("User not found");
+
+      const otpValidation = /^\d{6}$/.test(otp);
+
+      if (!otpValidation) throw new BadRequestException("Wrong otp validation");
+
+      const time = Date.now();
+
+      if (time > foundedUser.otpTime)
+        throw new BadRequestException("Otp expired");
+
+      if (otp !== foundedUser.otp) throw new BadRequestException("Wrong otp");
+
+      const hashPassword = await bcrypt.hash(new_password, 10);
+
+      await this.authRepository.update(foundedUser.id, {
+        password: hashPassword
+      })
+      return {
+        message: "forgotPassword"
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
 
   async findAllUser(query: QueryDto) {
     try {

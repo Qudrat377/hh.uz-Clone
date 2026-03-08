@@ -23,12 +23,13 @@ export class GithubStrategy extends PassportStrategy(Strategy, "github") {
     try {
 
       const { emails, photos, provider, id } = profile;
+console.log(profile);
 
       const user = {
         email: emails[0].value,
         accessToken,
         profile: {
-        //   firstName: profile.displayName,
+          firstName: profile.displayName ? profile.displayName : profile.username,
           avatarUrl: photos[0]?.value || "",
         },
 

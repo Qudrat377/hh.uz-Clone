@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
 } from "typeorm";
 import { BaseEntity } from "src/database/base.entity";
 import { Cauntry } from "src/shared/constants/enum/country";
@@ -12,6 +13,7 @@ import { WorkYears } from "src/shared/constants/enum/work.years";
 import { Position } from "src/shared/constants/enum/position";
 import { WorkHeader } from "src/shared/constants/enum/work.title";
 import { Auth } from "src/module/auth/entities/auth.entity";
+import { Reply } from "src/module/reply/entities/reply.entity";
 
 @Entity({ name: "job" })
 export class Job extends BaseEntity {
@@ -67,9 +69,11 @@ export class Job extends BaseEntity {
 
   //   relations
   @ManyToOne(() => Auth, (user) => user.jobs, {
-    cascade: true,
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "author_id" })
   author: Auth;
+
+  @OneToMany(() => Reply, (reply) => reply.job, {cascade: true})
+  replies: Reply[];
 }

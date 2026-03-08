@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   Req,
@@ -25,7 +26,12 @@ import {
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
-import { CreateAuthDto, LoginAuthDto } from "./dto/create-auth.dto";
+import {
+  CreateAuthDto,
+  ForgotPasswordAuthDto,
+  LoginAuthDto,
+  ResentOtpAuthDto,
+} from "./dto/create-auth.dto";
 import { AuthGuard } from "@nestjs/passport";
 import { VerifyAuthDto } from "./dto/verify.dto";
 import { QueryDto } from "./dto/query.dto";
@@ -70,7 +76,7 @@ export class AuthController {
     return this.authService.register(createAuthDto);
   }
 
-  // verify 
+  // verify
   @ApiOperation({ description: "Verify api (public)" })
   @ApiOkResponse({ description: "Token" })
   @ApiBadRequestResponse({ description: "User not found" })
@@ -81,30 +87,50 @@ export class AuthController {
     return this.authService.verify(verifyAuthDto);
   }
 
-  // login 
-  @ApiOperation({description: "Login api (public)"})
-  @ApiOkResponse({description: "Send email code"})
-  @ApiUnauthorizedResponse({description: "User not found"})
+  // login
+  @ApiOperation({ description: "Login api (public)" })
+  @ApiOkResponse({ description: "Send email code" })
+  @ApiUnauthorizedResponse({ description: "User not found" })
   @HttpCode(200)
   @Post("login")
   login(@Body() loginAuthDto: LoginAuthDto) {
     return this.authService.login(loginAuthDto);
   }
 
-  // findAll 
-  @ApiOperation({description: "Get All users api (public)"})
-  @ApiOkResponse({description: "list of users"})
+  // resentOtp
+  @ApiOperation({ description: "Resent OTP api (owner)" })
+  @ApiBody({ type: ResentOtpAuthDto })
+  @ApiNotFoundResponse({ description: "User not found" })
+  @ApiOkResponse({ description: "Resent Otp" })
+  @Patch("resent_otp")
+  resentOtp(@Body() resentOtpAuthDto: ResentOtpAuthDto) {
+    return this.authService.resendOtp(resentOtpAuthDto);
+  }
+
+  // forgot password
+  @ApiOperation({ description: "Forgot password api (owner)" })
+  @ApiBody({ type: ForgotPasswordAuthDto })
+  @ApiNotFoundResponse({ description: "User not found" })
+  @ApiOkResponse({ description: "Forgot password" })
+  @Patch("forgot_password")
+  forgotPassword(@Body() forgotPasswordAuthDto: ForgotPasswordAuthDto) {
+    return this.authService.forgotPassword(forgotPasswordAuthDto);
+  }
+
+  // findAll
+  @ApiOperation({ description: "Get All users api (public)" })
+  @ApiOkResponse({ description: "list of users" })
   @Get()
   findAll(@Query() query: QueryDto) {
     return this.authService.findAllUser(query);
   }
 
-  // delete 
-  @ApiOperation({description: "Delete article api (owner)"})
-  @ApiNotFoundResponse({description: "User not found"})
-  @ApiOkResponse({description: "Deleted user"})
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string, @Req() req) {
+  // delete
+  @ApiOperation({ description: "Delete article api (owner)" })
+  @ApiNotFoundResponse({ description: "User not found" })
+  @ApiOkResponse({ description: "Deleted user" })
+  @Delete(":id")
+  remove(@Param("id", ParseIntPipe) id: string, @Req() req) {
     return this.authService.deleteUser(+id);
   }
 }

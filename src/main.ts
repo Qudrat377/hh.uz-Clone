@@ -1,10 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as express from "express"
+import { HttpExceptionFilter } from './common/filter/all-exception.filter';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   try {
   const app = await NestFactory.create(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      forbidNonWhitelisted: true,
+      whitelist: true,
+    }),
+  );
+
+  app.useGlobalFilters(new HttpExceptionFilter())
 
   const PORT = process.env.PORT || 3000
 
@@ -33,10 +46,11 @@ async function bootstrap() {
     }
   })
 
+  app.use("/uploads", express.static("uploads"));
+
   await app.listen(PORT, () => {
     console.log("Server is running at:", PORT) 
     console.log(`Documentation link: http://localhost:${PORT}/api`);
-      
   });
   } catch(error) {
     return error.message
